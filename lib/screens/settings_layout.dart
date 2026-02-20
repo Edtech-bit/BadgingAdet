@@ -3,6 +3,7 @@ import '../models/tool_module.dart';
 import 'bmi.dart';
 import 'expense.dart';
 import 'gradecalculator.dart';
+import 'homescreen.dart';
 
 class HomePage extends StatefulWidget {
   final int initialIndex;
@@ -304,6 +305,16 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: _themeColor,
           foregroundColor: Colors.white,
           elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            },
+            tooltip: 'Back to Home',
+          ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
