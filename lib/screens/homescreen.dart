@@ -95,11 +95,11 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCreatorsGrid() {
     final creators = [
-      'Creator Name 1',
-      'Creator Name 2',
-      'Creator Name 3',
-      'Creator Name 4',
-      'Creator Name 5',
+      'ANUNCIATION, Adrian',
+      'CASTILLO, Ed Clarence',
+      'LOZANO, Aaron Daniel',
+      'PINEDA, Eldrin Josh',
+      'PRADILLA, Khristian Carl',
     ];
 
     return Column(
