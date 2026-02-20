@@ -243,18 +243,6 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                             decoration: InputDecoration(
                               hintText: 'e.g., 1500',
                               hintStyle: TextStyle(color: Colors.grey[400]),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: themeColor, width: 2),
-                              ),
                               filled: true,
                               fillColor: const Color(0xFFF9FAFB),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -286,18 +274,6 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                             decoration: InputDecoration(
                               hintText: 'e.g., 4',
                               hintStyle: TextStyle(color: Colors.grey[400]),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: themeColor, width: 2),
-                              ),
                               filled: true,
                               fillColor: const Color(0xFFF9FAFB),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
