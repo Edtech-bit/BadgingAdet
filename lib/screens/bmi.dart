@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/tool_module.dart';
 
+
+// Extending the BmiModule using 'extends' (Inheritance)
 class BmiModule extends ToolModule {
   @override String get title => 'BMI Checker';
   @override IconData get icon => Icons.monitor_weight_outlined;
   
   // 4 Private Variables for the BMI Module + 2 Functions to control the display of the UI
+  // assigned variables dynamically based on type needs
   double _height = 0;
   double _weight = 0;
   double? _bmiResult;
@@ -18,6 +21,8 @@ class BmiModule extends ToolModule {
     _height = double.tryParse(_inputH.text) ?? 0;
     _weight = double.tryParse(_inputW.text) ?? 0;
     
+    // This If-else checks for empty variables before doing calculations
+    // Then categorizing the result gotten based on colos
     if (_height > 0 && _weight > 0) {
       final heightInMeters = _height / 100;
       _bmiResult = _weight / (heightInMeters * heightInMeters);
@@ -35,13 +40,11 @@ class BmiModule extends ToolModule {
   }
 
   Color resultingColor() {
-    switch (_category) {
-      case 'Underweight': return const Color(0xFF3B82F6);
-      case 'Normal': return const Color(0xFF10B981);
-      case 'Overweight': return const Color(0xFFF59E0B);
-      case 'Obese': return const Color(0xFFEF4444);
-      default: return Colors.grey;
-    }
+    if (_category == 'Underweight') return Color(0xff3b82f6);
+    if (_category == 'Normal') return Color(0xFF10B981);
+    if (_category == 'Overweight') return Colors.orange;
+    if (_category == 'Obese') return Colors.redAccent;
+    return Colors.grey;
   }
 
   @override Widget buildBody(BuildContext context) { return _BmiModuleBody(module: this); }
@@ -55,15 +58,17 @@ class _BmiModuleBody extends StatefulWidget {
 
 class _BmiModuleBodyState extends State<_BmiModuleBody> {
   @override Widget build(BuildContext context) {
-    final mainColor = Theme.of(context).primaryColor;
-    final lightThemeColor = mainColor.withValues(alpha: 0.15);
+    var mainColor = Theme.of(context).primaryColor;
+    var lightThemeColor = mainColor.withValues(alpha: 0.15);
 
     return Container(
       color: const Color(0xFFF5F5F7),
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          if (widget.module._bmiResult != null) ...[ // The start of the BMI Module
+          // The start of the BMI Module
+          // This If statement checks if a module is being used (in this case, it's the bmi), thus it would generate the appropriate screen
+          if (widget.module._bmiResult != null) ...[ 
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -78,7 +83,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: [ // Result Display/Header
                       const Text('YOUR BMI', 
                       style: TextStyle(fontSize: 12, 
                       fontWeight: FontWeight.w600, 
@@ -95,8 +100,10 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
                           widget.module._category!,
                           style: TextStyle(fontSize: 12, 
                           fontWeight: FontWeight.w600, 
-                          color: widget.module.resultingColor())
-                        ) ) ] ),
+                          color: widget.module.resultingColor()) ) 
+                          ) 
+                        ] 
+                      ),
 
                   const SizedBox(height: 12),
 
@@ -121,8 +128,13 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
 
                       _displayMetrics('Weight', '${widget.module._weight.toStringAsFixed(0)} kg')
                     ]
-                  ) ] ) ),
+                  ) 
+                ] 
+              ) 
+            ),
+
             const SizedBox(height: 24)
+
           ],
 
           Container(
@@ -130,7 +142,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: [ // Inputting details Body
                 const Text('Enter Details', 
                 style: TextStyle(fontSize: 18, 
                 fontWeight: FontWeight.bold, 
@@ -193,7 +205,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: Column(
+            child: Column(  // Small section representing the bmi chart
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Category Guide', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
@@ -202,9 +214,9 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
                 const SizedBox(height: 12),
                 _displayCategory('Normal', '18.5–24.9', const Color(0xFF10B981)),
                 const SizedBox(height: 12),
-                _displayCategory('Overweight', '25–29.9', const Color(0xFFF59E0B)),
+                _displayCategory('Overweight', '25–29.9', Colors.orange),
                 const SizedBox(height: 12),
-                _displayCategory('Obese', '30 and above', const Color(0xFFEF4444))
+                _displayCategory('Obese', '30 and above', Colors.redAccent)
               ]
               )
           )
@@ -213,6 +225,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
     );
   }
 
+// Widgets builders for the display boxes/inputs
   Widget _displayMetrics(String label, String value) {
     return Expanded(
       child: Container(
@@ -245,31 +258,15 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label,  
-          style: TextStyle( fontSize: 13, 
-          fontWeight: FontWeight.w500, 
-          color: Colors.grey[600]
-          )),
-
+          style: TextStyle( fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[600] )
+          ),
           const SizedBox(height: 8),
-
           TextField(
             controller: controller,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12), 
-                borderSide: BorderSide(color: Colors.grey[300]!)
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12), 
-                borderSide: BorderSide(color: Colors.grey[300]!)
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12), 
-                borderSide: BorderSide(color: focusColor, width: 2)
-              ),
               filled: true,
               fillColor: const Color(0xFFF9FAFB),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16)
