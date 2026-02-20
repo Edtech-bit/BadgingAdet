@@ -117,10 +117,6 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(color: Colors.grey[400]),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: themeColor, width: 2)),
-      filled: true,
       fillColor: const Color(0xFFF9FAFB),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
@@ -152,7 +148,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     final grade = double.tryParse(_inputGrade.text);
     final units = double.tryParse(_inputUnits.text);
 
-    if (subjectName.isEmpty || grade == null || units == null) return _showError('Please fill all fields with valid values');
+    if (subjectName.isEmpty || grade == null || units == null) return _showError('Please input with valid values');
     if (grade < 1.0 || grade > 5.0) return _showError('Grade must be between 1.0 and 5.0');
     if (units <= 0) return _showError('Units must be greater than 0');
 
@@ -213,8 +209,6 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
               children: [
                 const Text('Add Subject', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
                 const SizedBox(height: 20),
-                Text('Subject subjectName', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[600])),
-                const SizedBox(height: 8),
                 TextField(controller: _inputSubject, decoration: _inputDec('e.g., Math in the Modern World', themeColor)),
                 const SizedBox(height: 20),
                 Row(
@@ -246,6 +240,8 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                       style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF1F2937), side: BorderSide(color: Colors.grey[300]!, width: 1.5), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                       child: const Text('Reset Fields', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                     )),
+
+                    SizedBox(height: 83),
                   ],
                 ),
                 const SizedBox(height: 12),
