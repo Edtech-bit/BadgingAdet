@@ -7,32 +7,46 @@ class GradeCalculatorModule extends ToolModule {
   @override
   IconData get icon => Icons.school_outlined;
 
-  final List<Subject> subjects = [];
-  
-  double? gwa;
+  final List<Subject> _subjects = [];
+  List<Subject> get subjects => List.unmodifiable(_subjects);
+
+  double? _gwa;
+  double? get gwa => _gwa;
+
   final double _targetGrade = 1.50;
+  double get targetGrade => _targetGrade;
 
   void addSubject(String subjectName, double grade, double units) {
-    subjects.add(Subject(subjectName: subjectName, grade: grade, units: units));
+    _subjects.add(Subject(subjectName: subjectName, grade: grade, units: units));
+    computeGWA();
+  }
+
+  void removeSubject(int index) {
+    _subjects.removeAt(index);
+    computeGWA();
+  }
+
+  void clearSubjects() {
+    _subjects.clear();
     computeGWA();
   }
 
   void computeGWA() {
-    if (subjects.isEmpty) {
-      gwa = null;
+    if (_subjects.isEmpty) {
+      _gwa = null;
       return;
     }
     double totalPoints = 0;
     double totalUnits = 0;
-    for (var subject in subjects) {
+    for (var subject in _subjects) {
       totalPoints += subject.grade * subject.units;
       totalUnits += subject.units;
     }
-    if (totalUnits > 0) gwa = totalPoints / totalUnits;
+    if (totalUnits > 0) _gwa = totalPoints / totalUnits;
   }
 
-  double get totalUnits => subjects.fold(0, (sum, subject) => sum + subject.units);
-  int get subjectCount => subjects.length;
+  double get totalUnits => _subjects.fold(0, (sum, subject) => sum + subject.units);
+  int get subjectCount => _subjects.length;
 
   @override
   Widget buildBody(BuildContext context) => _GradeCalculatorModuleBody(module: this);
@@ -60,7 +74,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
-      backgroundColor: const Color(0xFFDC2626), 
+      backgroundColor: const Color(0xFFDC2626),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ));
@@ -94,8 +108,8 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                 child: FilledButton(
                   onPressed: () { Navigator.pop(ctx); onConfirm(); },
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFFEE2E2), 
-                    foregroundColor: const Color(0xFFDC2626), 
+                    backgroundColor: const Color(0xFFFEE2E2),
+                    foregroundColor: const Color(0xFFDC2626),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: const BorderSide(color: Color(0xFFFFCDD2)),
@@ -117,8 +131,21 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(color: Colors.grey[400]),
+      filled: true,
       fillColor: const Color(0xFFF9FAFB),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: themeColor, width: 2),
+      ),
     );
   }
 
@@ -192,7 +219,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                       const SizedBox(width: 12),
                       _displayDetails('Subjects', '${widget.module.subjectCount}'),
                       const SizedBox(width: 12),
-                      _displayDetails('Target', widget.module._targetGrade.toStringAsFixed(2)),
+                      _displayDetails('Target', widget.module.targetGrade.toStringAsFixed(2)),
                     ],
                   ),
                 ],
@@ -240,8 +267,6 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                       style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF1F2937), side: BorderSide(color: Colors.grey[300]!, width: 1.5), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                       child: const Text('Reset Fields', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                     )),
-
-                    SizedBox(height: 83),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -252,8 +277,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                       title: 'Clear all subjects?',
                       content: 'This will remove all subjects in the list. This action can\'t be undone.',
                       onConfirm: () => setState(() {
-                        widget.module.subjects.clear();
-                        widget.module.computeGWA();
+                        widget.module.clearSubjects(); // ✅ uses proper method
                       }),
                     ),
                     style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red, width: 1.5), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), backgroundColor: const Color(0xFFFEE2E2)),
@@ -291,8 +315,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                               title: 'Delete subject?',
                               content: 'Are you sure you want to remove this subject from the list?',
                               onConfirm: () => setState(() {
-                                widget.module.subjects.removeAt(entry.key);
-                                widget.module.computeGWA();
+                                widget.module.removeSubject(entry.key); // ✅ uses proper method
                               }),
                             ),
                             child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.red)),
