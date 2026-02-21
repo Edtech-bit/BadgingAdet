@@ -7,8 +7,15 @@ import 'homescreen.dart';
 
 class HomePage extends StatefulWidget {
   final int initialIndex;
+  final String userName;
+  final Color themeColor;
   
-  const HomePage({super.key, this.initialIndex = 0});
+  const HomePage({
+    super.key,
+    this.initialIndex = 0,
+    this.userName = '',
+    this.themeColor = const Color(0xFF7B9FE8),
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   late int _currentIndex;
-  String _userName = 'User';
-  Color _themeColor = const Color(0xFF7B9FE8);
+  late String _userName;
+  late Color _themeColor;
 
   final List<Color> _themeColors = [
     const Color(0xFF7B9FE8),
@@ -41,6 +48,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _userName = widget.userName;
+    _themeColor = widget.themeColor;
   }
 
   void _showSettingsDialog() {
@@ -248,10 +257,22 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: FilledButton(
                                   onPressed: () {
+                                    final name = nameController.text.trim();
+                                    if (name.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: const Text('Please enter your name'),
+                                          backgroundColor: const Color(0xFFDC2626),
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
                                     setState(() {
-                                      _userName = nameController.text.trim().isEmpty 
-                                          ? 'User' 
-                                          : nameController.text.trim();
+                                      _userName = name;
                                       _themeColor = selectedColor;
                                     });
                                     Navigator.of(context).pop();
@@ -310,7 +331,12 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(
+                    userName: _userName,
+                    themeColor: _themeColor,
+                  ),
+                ),
               );
             },
             tooltip: 'Back to Home',
@@ -319,7 +345,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hi, $_userName',
+                _userName.isEmpty ? 'Welcome!' : 'Hi, $_userName',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
