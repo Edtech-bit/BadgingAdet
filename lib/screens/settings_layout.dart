@@ -10,11 +10,12 @@ class HomePage extends StatefulWidget {
   final String userName;
   final Color themeColor;
   
+  // setting up the defaults JUST in case nothing get passed in
   const HomePage({
     super.key,
     this.initialIndex = 0,
     this.userName = '',
-    this.themeColor = const Color(0xFF7B9FE8),
+    this.themeColor = Colors.blue
   });
 
   @override
@@ -22,10 +23,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // putting all the tools in a list so we can access them by index numbers
   final List<ToolModule> modules = [
     BmiModule(),
     ExpenseSplitterModule(),
-    GradeCalculatorModule(),
+    GradeCalculatorModule()
   ];
 
   late int _currentIndex;
@@ -33,15 +35,15 @@ class _HomePageState extends State<HomePage> {
   late Color _themeColor;
 
   final List<Color> _themeColors = [
-    const Color(0xFF7B9FE8),
-    const Color(0xFF81C995),
-    const Color(0xFFB39CD0),
+    Colors.blue,
+    Colors.green,
+    Colors.purple
   ];
 
   final List<String> _themeColorNames = [
     'Blue',
     'Green',
-    'Purple',
+    'Purple'
   ];
 
   @override
@@ -61,16 +63,19 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            
+            // this the popup window for settings
+            // where user can change their name and color
             return Dialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24)
               ),
               elevation: 8,
               child: Container(
                 padding: const EdgeInsets.all(0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24)
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -81,26 +86,26 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFFE8EFFA),
-                            const Color(0xFFD4E3F7),
+                            Colors.blue.shade50,
+                            Colors.blue.shade100
                           ],
                           begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                          end: Alignment.bottomRight
                         ),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                          topRight: Radius.circular(24)
+                        )
                       ),
                       child: const Text(
                         'Settings',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF2C3E50),
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                          color: Colors.blueGrey,
+                          letterSpacing: 0.5
+                        )
+                      )
                     ),
                     
                     Padding(
@@ -113,9 +118,9 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF6B7280),
-                              letterSpacing: 0.3,
-                            ),
+                              color: Colors.grey,
+                              letterSpacing: 0.3
+                            )
                           ),
                           const SizedBox(height: 8),
                           TextField(
@@ -123,22 +128,8 @@ class _HomePageState extends State<HomePage> {
                             decoration: InputDecoration(
                               hintText: 'Enter your name',
                               hintStyle: TextStyle(color: Colors.grey[400]),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFF7B9FE8), width: 2),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16)
+                            )
                           ),
                           const SizedBox(height: 24),
                           Row(
@@ -149,21 +140,24 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF6B7280),
-                                  letterSpacing: 0.3,
-                                ),
+                                  color: Colors.grey,
+                                  letterSpacing: 0.3
+                                )
                               ),
                               Text(
                                 'Choose 1 of 3',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[500],
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ],
+                                  letterSpacing: 0.3
+                                )
+                              )
+                            ]
                           ),
                           const SizedBox(height: 12),
+                          
+                          // creating the color buttons by mapping the list
+                          // making sure it highlight the one that is picked
                           ..._themeColors.asMap().entries.map((entry) {
                             final index = entry.key;
                             final color = entry.value;
@@ -185,8 +179,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
                                       color: isSelected ? color : Colors.grey[200]!,
-                                      width: isSelected ? 2 : 1,
-                                    ),
+                                      width: isSelected ? 2 : 1
+                                    )
                                   ),
                                   child: Row(
                                     children: [
@@ -195,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: color.withValues(alpha: 0.3),
-                                          shape: BoxShape.circle,
+                                          shape: BoxShape.circle
                                         ),
                                         child: Center(
                                           child: Container(
@@ -203,27 +197,27 @@ class _HomePageState extends State<HomePage> {
                                             height: 24,
                                             decoration: BoxDecoration(
                                               color: color,
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
+                                              shape: BoxShape.circle
+                                            )
+                                          )
+                                        )
                                       ),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Text(
                                           _themeColorNames[index],
                                           style: TextStyle(
-                                            color: const Color(0xFF1F2937),
+                                            color: Colors.blueGrey[900],
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.3,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                            letterSpacing: 0.3
+                                          )
+                                        )
+                                      )
+                                    ]
+                                  )
+                                )
+                              )
                             );
                           }),
                           const SizedBox(height: 8),
@@ -235,39 +229,41 @@ class _HomePageState extends State<HomePage> {
                                     Navigator.of(context).pop();
                                   },
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: const Color(0xFF6B7280),
+                                    foregroundColor: Colors.grey,
                                     side: BorderSide(color: Colors.grey[300]!, width: 1),
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12)
                                     ),
-                                    backgroundColor: Colors.white,
+                                    backgroundColor: Colors.white
                                   ),
                                   child: const Text(
                                     'CANCEL',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ),
+                                      letterSpacing: 1
+                                    )
+                                  )
+                                )
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: FilledButton(
                                   onPressed: () {
                                     final name = nameController.text.trim();
+                                    
+                                    // a red snackbar error if user try to save without name it wont let them
                                     if (name.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: const Text('Please enter your name'),
-                                          backgroundColor: const Color(0xFFDC2626),
+                                          backgroundColor: Colors.red[600],
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        ),
+                                            borderRadius: BorderRadius.circular(10)
+                                          )
+                                        )
                                       );
                                       return;
                                     }
@@ -278,48 +274,50 @@ class _HomePageState extends State<HomePage> {
                                     Navigator.of(context).pop();
                                   },
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: const Color(0xFF4F7FEE),
+                                    backgroundColor: Colors.blue[600],
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12)
                                     ),
-                                    elevation: 0,
+                                    elevation: 0
                                   ),
                                   child: const Text(
                                     'SAVE',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                                      letterSpacing: 1
+                                    )
+                                  )
+                                )
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    )
+                  ]
+                )
+              )
             );
-          },
+          }
         );
-      },
+      }
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // wrapping everything in Theme so the colors updates everywhere
+    // when the user pick a new color in settings
     return Theme(
       data: ThemeData(
         primaryColor: _themeColor,
         colorScheme: ColorScheme.fromSeed(
           seedColor: _themeColor,
-          primary: _themeColor,
-        ),
+          primary: _themeColor
+        )
       ),
       child: Scaffold(
         appBar: AppBar(
@@ -334,12 +332,12 @@ class _HomePageState extends State<HomePage> {
                 MaterialPageRoute(
                   builder: (context) => HomeScreen(
                     userName: _userName,
-                    themeColor: _themeColor,
-                  ),
-                ),
+                    themeColor: _themeColor
+                  )
+                )
               );
             },
-            tooltip: 'Back to Home',
+            tooltip: 'Back to Home'
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,33 +347,36 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
+                  letterSpacing: 1
+                )
               ),
               Text(
                 modules[_currentIndex].title,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
+                  letterSpacing: 0.5
+                )
+              )
+            ]
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: _showSettingsDialog,
-              tooltip: 'Settings',
-            ),
-          ],
+              tooltip: 'Settings'
+            )
+          ]
         ),
+        
+        // showing the actual tool screen based on what tab index we are on
         body: modules[_currentIndex].buildBody(context),
+        
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: _themeColor, width: 3),
-            ),
+              top: BorderSide(color: _themeColor, width: 3)
+            )
           ),
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
@@ -388,20 +389,21 @@ class _HomePageState extends State<HomePage> {
             unselectedItemColor: Colors.grey,
             selectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
+              letterSpacing: 0.5
             ),
             unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.normal
             ),
+            // mapping the modules list to create the bottom buttons automatically
             items: modules.map((module) {
               return BottomNavigationBarItem(
                 icon: Icon(module.icon),
-                label: module.title,
+                label: module.title
               );
-            }).toList(),
-          ),
-        ),
-      ),
+            }).toList()
+          )
+        )
+      )
     );
   }
 }
