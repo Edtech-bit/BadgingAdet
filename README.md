@@ -19,7 +19,7 @@ Developer of application logic and OOP structure.
 Recorded and edited the demo video of the application.
 
 **Khristian Pradilla**  
-Contributed to UI design planning (Figma), captured screenshots, and organized documentation files.
+Contributed to UI design planning (Figma), captured screenshots, organized documentation files, and recorded the video.
 
 ---
 
