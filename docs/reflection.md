@@ -1,0 +1,5 @@
+    Before starting the badging activity, the group was already handling major projects from other subjects, which made communication and coordination difficult. Despite time constraints, they were able to organize discussions and begin working on the project.
+
+    The most challenging part was implementing the logic and designing the modules and toolkits. The Expense Splitter was the hardest due to complex calculations, followed by the Grade Calculator, which was aligned with the university’s grading system. The BMI Checker was the easiest. Designing widgets and structuring the UI were also challenging, and due to limited time, some AI assistance was used. Multiple UI/UX drafts were created before finalizing a clean and visually appealing design.
+
+    Through the activity, the group learned the importance of communication, time management, proper planning, and teamwork. They also gained a deeper understanding of OOP by applying it in a real project. Each member actively contributed: Pineda led the group, Pineda and Lozano handled coding, Anunciacion and Pradilla worked on UI/UX design, and Castillo managed the demo video and quality assurance.
