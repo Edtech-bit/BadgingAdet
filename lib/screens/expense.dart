@@ -7,18 +7,24 @@ class ExpenseSplitterModule extends ToolModule {
 
   @override
   IconData get icon => Icons.attach_money;
-
   double _total = 0.0;
-  int _pax = 5;
+  int _pax = 0;
   double _tipPercent = 10.0;
   double? _perPerson;
   double? _tipAmount;
   double? _grandTotal;
 
+  //Text field to be able to enter bill information
   final TextEditingController _totalController = TextEditingController();
   final TextEditingController _paxController = TextEditingController();
 
-  void compute() {
+  //Placeholders for pax and max number of bill
+  //Para sa checkers
+  static const double _isBillTooBig = 1000000.0;
+  static const int _groupMax = 30;
+  
+  //Code para sa bill split function
+  void splitBill() {
     if (_total > 0 && _pax > 0) {
       _tipAmount = _total * (_tipPercent / 100);
       _grandTotal = _total + _tipAmount!;
@@ -26,9 +32,10 @@ class ExpenseSplitterModule extends ToolModule {
     }
   }
 
-  void reset() {
+  //Code para makapag reset ng inputs
+  void clearAll() {
     _total = 0.0;
-    _pax = 5;
+    _pax = 0;
     _tipPercent = 10.0;
     _perPerson = null;
     _tipAmount = null;
@@ -37,36 +44,86 @@ class ExpenseSplitterModule extends ToolModule {
     _paxController.clear();
   }
 
+  //Gets the bill and checks if masyadong malaki yung bill
+  bool get isBillTooBig => _total > _isBillTooBig;
+
   @override
   Widget buildBody(BuildContext context) {
-    return _ExpenseSplitterModuleBody(module: this);
+    return _ExpenseSplitterBody(module: this);
   }
 }
 
-class _ExpenseSplitterModuleBody extends StatefulWidget {
+class _ExpenseSplitterBody extends StatefulWidget {
   final ExpenseSplitterModule module;
-
-  const _ExpenseSplitterModuleBody({required this.module});
+  const _ExpenseSplitterBody({required this.module});
 
   @override
-  State<_ExpenseSplitterModuleBody> createState() => _ExpenseSplitterModuleBodyState();
+  State<_ExpenseSplitterBody> createState() => _ExpenseSplitterBodyState();
 }
 
-class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> {
-  Color _getThemeColor(BuildContext context) {
-    return Theme.of(context).primaryColor;
+class _ExpenseSplitterBodyState extends State<_ExpenseSplitterBody> {
+  
+  //If statement to check different situations
+  String? _billChecker() {
+    if (widget.module._total <= 0) {
+      return 'Please enter the total bill amount.';
+    } if (widget.module._total < 1.0) {
+      return 'Bill amount seems too low. Did you mean ₱${(widget.module._total * 100).toStringAsFixed(0)}?';
+    } if (widget.module._pax <= 0) {
+      return 'Number of people must be at least 1.';
+    } if (widget.module._pax > ExpenseSplitterModule._groupMax) {
+      return 'For groups over ${ExpenseSplitterModule._groupMax}, please double check your inputs.';
+    }
+    return null;
   }
 
+  //Error message para lumitaw sa snack bar
+  void _showErrorMessages(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: const Color(0xFFDC2626),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ));
+  }
+
+  //Code para sa ma-call yung computation function and checker
+  void _onCompute() {
+    final error = _billChecker();
+    if (error != null) {
+      _showErrorMessages(error);
+      return;
+    }
+
+    setState(() {
+      widget.module.splitBill();
+    });
+  }
+  
+  //Widget build and css
   @override
   Widget build(BuildContext context) {
-    final themeColor = _getThemeColor(context);
+    
+    final themeColor = Theme.of(context).primaryColor;
     final lightThemeColor = themeColor.withValues(alpha: 0.15);
+
+   
+    final statBoxBorder = Border.all(
+      color: const Color.fromARGB(255, 162, 162, 162),
+      width: 0.6,
+    );
+    const statBoxRadius = BorderRadius.all(Radius.circular(12));
+    const statBoxPadding = EdgeInsets.all(16);
+    const statLabelStyle = TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
+    const statValueStyle = TextStyle(
+        fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937));
 
     return Container(
       color: const Color(0xFFF5F5F7),
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          
           if (widget.module._perPerson != null) ...[
             Container(
               padding: const EdgeInsets.all(20),
@@ -74,10 +131,7 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    lightThemeColor,
-                    Colors.white,
-                  ],
+                  colors: [lightThemeColor, Colors.white],
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -88,7 +142,7 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'PER PERSON SHARE',
+                        'EACH PERSON PAYS',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -96,6 +150,7 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                           letterSpacing: 1,
                         ),
                       ),
+                      
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
@@ -113,9 +168,11 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                       ),
                     ],
                   ),
+                  
                   const SizedBox(height: 12),
+                  
                   Text(
-                    '₱${widget.module._perPerson!.toStringAsFixed(0)}',
+                    '₱${widget.module._perPerson!.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
@@ -123,40 +180,27 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                       height: 1.1,
                     ),
                   ),
+                  
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: statBoxPadding,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 162, 162, 162),
-                              width: 0.6,
-                            ),
+                            borderRadius: statBoxRadius,
+                            border: statBoxBorder,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'People',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              Text('People',
+                                  style: statLabelStyle.copyWith(
+                                      color: Colors.grey[600])),
                               const SizedBox(height: 4),
-                              Text(
-                                '${widget.module._pax}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
+                              Text('${widget.module._pax}',
+                                  style: statValueStyle),
                             ],
                           ),
                         ),
@@ -164,35 +208,22 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                       const SizedBox(width: 12),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: statBoxPadding,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 162, 162, 162),
-                              width: 0.6,
-                            ),
+                            borderRadius: statBoxRadius,
+                            border: statBoxBorder,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Total',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              Text('Total w/ Tip',
+                                  style: statLabelStyle.copyWith(
+                                      color: Colors.grey[600])),
                               const SizedBox(height: 4),
                               Text(
-                                '₱${widget.module._grandTotal!.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
+                                  '₱${widget.module._grandTotal!.toStringAsFixed(2)}',
+                                  style: statValueStyle),
                             ],
                           ),
                         ),
@@ -204,6 +235,7 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
             ),
             const SizedBox(height: 24),
           ],
+
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -214,13 +246,20 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Enter Details',
+                  'Bill Details',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1F2937),
                   ),
                 ),
+                
+                const SizedBox(height: 4),
+                Text(
+                  'Enter the total bill and how many people are splitting it.',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                ),
+                
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -229,23 +268,29 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Total Amount',
+                            'Total Bill (₱)',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[600],
                             ),
                           ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Before tip',
+                            style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                          ),
                           const SizedBox(height: 8),
                           TextField(
                             controller: widget.module._totalController,
-                            keyboardType: TextInputType.number,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             decoration: InputDecoration(
                               hintText: 'e.g., 1500',
                               hintStyle: TextStyle(color: Colors.grey[400]),
                               filled: true,
                               fillColor: const Color(0xFFF9FAFB),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 16),
                             ),
                             onChanged: (value) {
                               widget.module._total = double.tryParse(value) ?? 0;
@@ -254,19 +299,27 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                         ],
                       ),
                     ),
+                    
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Number of People',
+                            'No. of People',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[600],
                             ),
                           ),
+                          
+                          const SizedBox(height: 4),
+                          Text(
+                            'Including yourself',
+                            style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                          ),
+                          
                           const SizedBox(height: 8),
                           TextField(
                             controller: widget.module._paxController,
@@ -276,7 +329,8 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                               hintStyle: TextStyle(color: Colors.grey[400]),
                               filled: true,
                               fillColor: const Color(0xFFF9FAFB),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 16),
                             ),
                             onChanged: (value) {
                               widget.module._pax = int.tryParse(value) ?? 1;
@@ -287,28 +341,35 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                     ),
                   ],
                 ),
+                
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Tip Percentage',
+                      'Tip / Service Charge',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: Colors.grey[600],
                       ),
                     ),
-                    Text(
-                      '${widget.module._tipPercent.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: themeColor,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${widget.module._tipPercent.toStringAsFixed(0)}%',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: themeColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                
                 const SizedBox(height: 8),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
@@ -333,42 +394,13 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                     },
                   ),
                 ),
+                
                 const SizedBox(height: 24),
                 Row(
                   children: [
                     Expanded(
                       child: FilledButton(
-                        onPressed: () {
-                          if (widget.module._total <= 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Please enter a valid amount'),
-                                backgroundColor: const Color(0xFFDC2626), 
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            );
-                            return;
-                          }
-                          if (widget.module._pax <= 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Please enter number of people'),
-                                backgroundColor: const Color(0xFFDC2626), 
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            );
-                            return;
-                          }
-                          setState(() {
-                            widget.module.compute();
-                          });
-                        },
+                        onPressed: _onCompute,
                         style: FilledButton.styleFrom(
                           backgroundColor: themeColor,
                           foregroundColor: Colors.white,
@@ -379,20 +411,18 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                           elevation: 0,
                         ),
                         child: const Text(
-                          'Compute',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
+                          'Split Bill',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                         ),
                       ),
                     ),
+                    
                     const SizedBox(width: 12),
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
                           setState(() {
-                            widget.module.reset();
+                            widget.module.clearAll();
                           });
                         },
                         style: OutlinedButton.styleFrom(
@@ -405,11 +435,8 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                           backgroundColor: Colors.white,
                         ),
                         child: const Text(
-                          'Reset',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
+                          'Clear',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                         ),
                       ),
                     ),
@@ -418,6 +445,7 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
               ],
             ),
           ),
+
           if (widget.module._perPerson != null) ...[
             const SizedBox(height: 24),
             Container(
@@ -430,25 +458,54 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Breakdown',
+                    'Bill Breakdown',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1F2937),
                     ),
                   ),
+
+                  const SizedBox(height: 4),
+                  Text(
+                    'How the total was calculated',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  ),
                   const SizedBox(height: 16),
-                  _buildBreakdownRow(
-                    'Subtotal',
-                    '₱${widget.module._total.toStringAsFixed(0)}',
-                    false,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Subtotal',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600])),
+                      Text('₱${widget.module._total.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1F2937))),
+                    ],
                   ),
+
                   const SizedBox(height: 12),
-                  _buildBreakdownRow(
-                    'Tip Amount',
-                    '₱${widget.module._tipAmount!.toStringAsFixed(0)}',
-                    false,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          'Tip (${widget.module._tipPercent.toStringAsFixed(0)}%)',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600])),
+                      Text('₱${widget.module._tipAmount!.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1F2937))),
+                    ],
                   ),
+
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -456,10 +513,20 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
                       color: lightThemeColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: _buildBreakdownRow(
-                      'Total',
-                      '₱${widget.module._grandTotal!.toStringAsFixed(0)}',
-                      true,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Grand Total',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1F2937))),
+                        Text('₱${widget.module._grandTotal!.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1F2937))),
+                      ],
                     ),
                   ),
                 ],
@@ -468,30 +535,6 @@ class _ExpenseSplitterModuleBodyState extends State<_ExpenseSplitterModuleBody> 
           ],
         ],
       ),
-    );
-  }
-
-  Widget _buildBreakdownRow(String label, String value, bool isTotal) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
-            color: isTotal ? const Color(0xFF1F2937) : Colors.grey[600],
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1F2937),
-          ),
-        ),
-      ],
     );
   }
 }

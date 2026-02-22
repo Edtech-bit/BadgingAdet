@@ -13,24 +13,28 @@ class GradeCalculatorModule extends ToolModule {
   double? _gwa;
   double? get gwa => _gwa;
 
-  final double _targetGrade = 1.50;
+  final double _targetGrade = 1.75;       //Minimum grade target to be included in the Dean's List in HAU
   double get targetGrade => _targetGrade;
 
+  //Add subject function
   void addSubject(String subjectName, double grade, double units) {
     _subjects.add(Subject(subjectName: subjectName, grade: grade, units: units));
     computeGWA();
   }
 
+  //Remove subject function
   void removeSubject(int index) {
     _subjects.removeAt(index);
     computeGWA();
   }
 
+  //Clear entered subjects and grades functions for convenience
   void clearSubjects() {
     _subjects.clear();
     computeGWA();
   }
 
+  //Compute function. The "brain" of the calculator
   void computeGWA() {
     if (_subjects.isEmpty) {
       _gwa = null;
@@ -52,6 +56,7 @@ class GradeCalculatorModule extends ToolModule {
   Widget buildBody(BuildContext context) => _GradeCalculatorModuleBody(module: this);
 }
 
+//Subject class. This is where you input your grades 
 class Subject {
   final String subjectName;
   final double grade;
@@ -66,6 +71,7 @@ class _GradeCalculatorModuleBody extends StatefulWidget {
   State<_GradeCalculatorModuleBody> createState() => _GradeCalculatorModuleBodyState();
 }
 
+//Code to input grades in a textbox 
 class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> {
   final _inputSubject = TextEditingController();
   final _inputGrade = TextEditingController();
@@ -80,6 +86,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     ));
   }
 
+  //Delete confirmation button design
   void _confirmDelete({required String title, required String content, required VoidCallback onConfirm}) {
     showDialog(
       context: context,
@@ -127,6 +134,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     );
   }
 
+  //Text input design code
   InputDecoration _inputDec(String hint, Color themeColor) {
     return InputDecoration(
       hintText: hint,
@@ -149,6 +157,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     );
   }
 
+  //Display details widget
   Widget _displayDetails(String label, String value) {
     return Expanded(
       child: Container(
@@ -170,6 +179,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     );
   }
 
+  //Adds a new subject and checks if the added subject is valid
   void _addSubject() {
     final subjectName = _inputSubject.text.trim();
     final grade = double.tryParse(_inputGrade.text);
@@ -187,6 +197,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
     });
   }
 
+  // Main Widget
   @override
   Widget build(BuildContext context) {
     final themeColor = Theme.of(context).primaryColor;
@@ -277,7 +288,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                       title: 'Clear all subjects?',
                       content: 'This will remove all subjects in the list. This action can\'t be undone.',
                       onConfirm: () => setState(() {
-                        widget.module.clearSubjects(); // ✅ uses proper method
+                        widget.module.clearSubjects(); 
                       }),
                     ),
                     style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red, width: 1.5), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), backgroundColor: const Color(0xFFFEE2E2)),
@@ -315,7 +326,7 @@ class _GradeCalculatorModuleBodyState extends State<_GradeCalculatorModuleBody> 
                               title: 'Delete subject?',
                               content: 'Are you sure you want to remove this subject from the list?',
                               onConfirm: () => setState(() {
-                                widget.module.removeSubject(entry.key); // ✅ uses proper method
+                                widget.module.removeSubject(entry.key); 
                               }),
                             ),
                             child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.red)),
