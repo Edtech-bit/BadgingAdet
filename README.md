@@ -43,8 +43,26 @@ It also includes personalization features such as display name input and theme c
 ### 1. BMI Checker  
 Allows the user to input height and weight to compute Body Mass Index (BMI) and display its category.
 
+Features:
+- Real-time BMI calculation based on height (cm) and weight (kg) input
+- Color-coded category indicators
+- Visual category guide with BMI ranges for reference
+- Reset functionality to clear all inputs and results
+- Requires valid numeric input for both height and weight
+- Shows error message via SnackBar if inputs are invalid or empty
+- Prevents calculation with zero or negative values
+
 ### 2. Expense Splitter  
 Allows the user to input total amount, number of persons (pax), and tip percentage to calculate per-person share.
+
+Features:
+- Adjustable tip/service charge slider (0% to 30%)
+- Displays detailed bill breakdown
+- Shows number of people and total amount with tip
+- Clear button to reset all inputs and results
+- Prompts notif on empty or invalid input
+- If bill is less than ₱1.00, the app suggests the user may have meant a higher amount (e.g., ₱100 instead of ₱1)
+- Requires at least 1 person to split the bill
 
 ### 3. Grade Calculator  
 Allows the user to input component grades and their corresponding weights to compute the final weighted grade.
