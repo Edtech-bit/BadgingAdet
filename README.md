@@ -63,9 +63,22 @@ Features:
 - Prompts notif on empty or invalid input
 - If bill is less than ₱1.00, the app suggests the user may have meant a higher amount (e.g., ₱100 instead of ₱1)
 - Requires at least 1 person to split the bill
+- If the total bill exceeds ₱1,000,000, the system flags it as unusually high to prevent accidental input mistakes
 
 ### 3. Grade Calculator  
 Allows the user to input component grades and their corresponding weights to compute the final weighted grade.
+
+Features:
+- Add unlimited subjects with name, grade, and units
+- Automatic GWA computation as subjects are added or removed
+- Displays total units and subject count
+- Shows target GWA (Dean's List standard: 1.75)
+- Delete individual subjects or clear all at once
+- Confirmation dialogs before deleting subjects
+- Accepts grades between 1.0 and 5.0
+- Requires unit values greater than zero
+- All fields must be filled before adding
+- Shows error if subject name is left blank
 
 These modules were chosen because they represent real-life daily tools related to health, finance, and academics. They demonstrate computation logic, validation handling, and encapsulated state management.
 
