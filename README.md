@@ -13,7 +13,6 @@ UI implementation, layout structure, testing, and documentation preparation.
 Developer of application logic and OOP structure.
 
 **EJ Pineda** 
-
 Developer of application logic and OOP structure.
 
 **Ed Castillo**  
