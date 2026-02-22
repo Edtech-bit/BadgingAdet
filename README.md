@@ -10,10 +10,10 @@
 UI implementation, layout structure, testing, and documentation preparation.
 
 **Aaron Lozano**  
-Main developer of application logic and OOP structure.
+Developer of application logic and OOP structure.
 
-**EJ Pineda**  
-Assisted in coding, debugging, and validation handling.
+**EJ Pineda** 
+Developer of application logic and OOP structure.
 
 **Ed Castillo**  
 Recorded and edited the demo video of the application.
@@ -51,65 +51,6 @@ Allows the user to input component grades and their corresponding weights to com
 
 These modules were chosen because they represent real-life daily tools related to health, finance, and academics. They demonstrate computation logic, validation handling, and encapsulated state management.
 
----
-
-## OOP Implementation
-
-### Abstraction  
-An abstract class `ToolModule` was created with:
-
-- `String get title`  
-- `IconData get icon`  
-- `Widget buildBody(BuildContext context)`  
-
-All modules follow this structure.
-
-### Inheritance  
-Three concrete classes extend `ToolModule`:
-
-- `BmiModule`  
-- `ExpenseSplitterModule`  
-- `GradeCalculatorModule`  
-
-### Encapsulation  
-Each module contains private state variables such as:
-
-- `_height`, `_weight`  
-- `_total`, `_pax`, `_tipPercent`  
-- `_grades`, `_weights`  
-
-State is updated only through controlled methods like:
-
-- `compute()`  
-- `reset()`  
-
-No result variables are directly modified from outside the module.
-
-### Polymorphism  
-A `List<ToolModule>` is used to dynamically generate navigation items and display module UI using the selected index.
-
----
-
-## Widget Literacy Checklist
-
-The application includes:
-
-- Scaffold  
-- AppBar  
-- BottomNavigationBar  
-- Text & Icon  
-- Container / Card  
-- TextField with TextEditingController  
-- ElevatedButton  
-- ListView  
-- SnackBar for validation feedback  
-- Slider (for tip percentage)  
-- Padding and SizedBox for spacing  
-
-Widgets are used logically across different modules and not crowded in a single screen.
-
----
-
 ## Personalization Features
 
 - User can enter display name  
@@ -142,16 +83,6 @@ flutter pub get
 flutter run  
 
 4. Select emulator or connected device  
-
----
-
-## Documentation Folder
-
-The `/docs` folder contains:
-
-- 8–12 screenshots (home + each module + validation examples)  
-- Reflection file  
-- Demo: video link of the application  
 
 ---
 
