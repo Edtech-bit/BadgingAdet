@@ -15,6 +15,7 @@ class BmiModule extends ToolModule {
   String? get category => _category;
   Color? get bmiColor => _bmiColor;
 
+  // the calculation function then labeling the user with the correct category and color
   void calculateBmi(double height, double weight) {
     _height = height;     _weight = weight;
 
@@ -71,6 +72,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
   }
 
   void _calculateBmi() {
+    // checking if user put valid numbers, then this calculate it
     final height = double.tryParse(_inputH.text);
     final weight = double.tryParse(_inputW.text);
 
@@ -100,8 +102,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
+            Text( label,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
@@ -109,8 +110,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
               )
             ),
             SizedBox(height: 4),
-            Text(
-              value,
+            Text( value,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -123,6 +123,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
     );
   }
 
+  // widget helper to make sure the contents look consistent
   Widget _inputHW(String label, String hint, TextEditingController controller) {
     return Expanded(
       child: Column(
@@ -136,7 +137,9 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
               color: Colors.grey[600]
             )
           ),
+
           SizedBox(height: 8),
+
           TextField(
             controller: controller,
             keyboardType: TextInputType.number,
@@ -193,6 +196,8 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
       child: ListView(
         padding: EdgeInsets.all(20),
         children: [
+          
+          // this big result card if we are in the bmi module and the user already have their bmi calculated
           if (widget.module.bmi != null) ...[
             Container(
               padding: EdgeInsets.all(20),
@@ -317,6 +322,7 @@ class _BmiModuleBodyState extends State<_BmiModuleBody> {
 
           SizedBox(height: 24),
 
+          // little category guide at bottom so user know what the colors mean
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
